@@ -473,7 +473,11 @@ class Si_timesheet_model extends App_Model
 	public function add_update_timesheet($data)
 {
     $data['staff_id'] = get_staff_user_id();
-    $data['start_time']  = strtotime(to_sql_date($data['start'], true));
+    $data['start_time'] = strtotime(to_sql_date($data['start'], true));
+
+    // Handle tags separately to prevent DB error
+    $tags = isset($data['tags']) ? $data['tags'] : '';
+    unset($data['tags']); // Remove from $data to avoid SQL issue
 
     if ($data['end'] !== '') {
         $data['end_time'] = strtotime(to_sql_date($data['end'], true));
@@ -486,7 +490,7 @@ class Si_timesheet_model extends App_Model
 
     if (isset($data['id']) && is_numeric($data['id'])) {
         $id = $data['id'];
-        unset($data['staff_id']);
+        unset($data['staff_id']); // Do not update staff_id
 
         $this->db->where('id', $id);
         $timer = $this->db->get(db_prefix() . 'taskstimers')->row();
@@ -498,14 +502,24 @@ class Si_timesheet_model extends App_Model
         $this->db->where('id', $id);
         $this->db->update(db_prefix() . 'taskstimers', $data);
 
-        return $id; // Return the ID even if no rows changed
+        if (!empty($tags)) {
+            handle_tags_save($tags, $id, 'task_timer'); // Save tags properly
+        }
+
+        return $id;
     }
 
+    // Insert new timesheet
     $this->db->insert(db_prefix() . 'taskstimers', $data);
     $insert_id = $this->db->insert_id();
 
-    return $insert_id; // Always return the ID
+    if (!empty($tags)) {
+        handle_tags_save($tags, $insert_id, 'task_timer'); // Save tags properly
+    }
+
+    return $insert_id;
 }
+
 
 	
 

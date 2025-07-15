@@ -297,9 +297,10 @@ class Si_timesheet extends AdminController
             $success = true;
 
             // Save tags (important!)
-            if (isset($data['tags'])) {
-                handle_tags_save($data['tags'], $timesheet_id, 'timesheet');
-            }
+			if (isset($data['tags'])) {
+				handle_tags_save($data['tags'], $timesheet_id, 'task_timer');
+			}
+			
 
             // Prepare message
             if (isset($data['id']) && is_numeric($data['id'])) {
@@ -318,23 +319,26 @@ class Si_timesheet extends AdminController
 }
 
 
-	public function view_timesheet($id=1)
+public function view_timesheet($id = 1)
+{
+	$data['timesheet'] = $this->si_timesheet_model->get_timesheet($id);
 
-	{
-
-		$data['timesheet'] = $this->si_timesheet_model->get_timesheet($id);
-
-		$data['editable'] = true;
-
-		if(get_option(SI_TIMESHEET_MODULE_NAME.'_completed_task_allow_edit')==0 && $data['timesheet']->status==5)
-
-			$data['editable'] = false;
-
-		if (!empty($data['timesheet']))
-
-			$this->load->view('timesheet/timesheet', $data);
-
+	// ✅ Get tags and pass them to the view
+	$data['tags'] = '';
+	if (!empty($data['timesheet'])) {
+		$tags = get_tags_in($id, 'task_timer');
+		$data['tags'] = implode(',', $tags);
 	}
+
+	$data['editable'] = true;
+
+	if (get_option(SI_TIMESHEET_MODULE_NAME . '_completed_task_allow_edit') == 0 && $data['timesheet']->status == 5) {
+		$data['editable'] = false;
+	}
+
+	$this->load->view('timesheet/timesheet', $data);
+}
+
 
 
 
