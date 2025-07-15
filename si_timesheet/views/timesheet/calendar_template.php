@@ -108,7 +108,21 @@
     <label for="tags" class="control-label"><i class="fa fa-tag" aria-hidden="true"></i> <?php echo _l('tags'); ?></label>
     <input type="text" class="tagsinput" id="tags" name="tags" value="" data-role="tagsinput">
 </div>
-<?php app_customers_init_tags(); ?>
+
+<!-- Load jQuery if not already loaded -->
+<script src="<?php echo base_url('assets/plugins/jquery/jquery.min.js'); ?>"></script>
+
+<!-- Load tagsinput assets -->
+<link href="<?php echo base_url('assets/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css'); ?>" rel="stylesheet">
+<script src="<?php echo base_url('assets/plugins/bootstrap-tagsinput/bootstrap-tagsinput.min.js'); ?>"></script>
+
+<!-- Initialize tags input safely -->
+<script>
+$(function() {
+    <?php echo app_customers_init_tags(true); ?> // Pass 'true' to echo output directly
+});
+</script>
+
 
 
 				</div>
