@@ -330,9 +330,13 @@ public function view_timesheet($id = 1)
 	$data['timesheet'] = $this->si_timesheet_model->get_timesheet($id);
 
 	$data['tags'] = '';
-	if (!empty($data['timesheet'])) {
-		$data['tags'] = $data['timesheet']->tags;
+if (!empty($data['timesheet'])) {
+	$data['tags'] = $data['timesheet']->tags;
+	if (!empty($data['tags'])) {
+		$data['tags'] = implode(',', explode(',', $data['tags']));
 	}
+}
+
 
 	$data['editable'] = true;
 
