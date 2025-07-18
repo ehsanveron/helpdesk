@@ -111,22 +111,37 @@
     </div>
 </div>
 
+<!-- Styles -->
 <link href="<?php echo base_url('assets/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css'); ?>" rel="stylesheet">
-<script src="<?php echo base_url('assets/plugins/bootstrap-tagsinput/bootstrap-tagsinput.min.js'); ?>"></script>
 
+<!-- Scripts -->
+<script src="<?php echo base_url('assets/plugins/bootstrap-tagsinput/bootstrap-tagsinput.min.js'); ?>"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
 <script>
 window.addEventListener('load', function() {
     jQuery(function($) {
-        // Initialize tagsinput
-        if ($('#tags').length) {
-            $('#tags').tagsinput({
-                trimValue: true,
-                tagClass: function(item) { return 'label label-info'; }
-            });
-        }
 
-        // Calculate time spent
+        // Autocomplete Tags Setup
+        var allTags = <?php echo json_encode(array_column(get_tags('task_timer'), 'name')); ?>;
+
+        var tags = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.whitespace,
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            local: allTags
+        });
+
+        $('#tags').tagsinput({
+            typeaheadjs: {
+                name: 'tags',
+                source: tags
+            },
+            trimValue: true,
+            tagClass: function(item) { return 'label label-info'; }
+        });
+
+        // Time Calculation
         function calculateTimeSpent() {
             var start = $('input[name="start"]').val();
             var end = $('input[name="end"]').val();
