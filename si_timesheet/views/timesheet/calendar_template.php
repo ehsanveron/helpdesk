@@ -135,3 +135,46 @@
     </div><!-- /.modal-dialog -->
 
 </div><!-- /.modal -->
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed'); ?>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script>
+window.addEventListener('load', function() {
+    jQuery(function($) {
+        function calculateTimeSpent() {
+            var start = $('input[name="start"]').val();
+            var end = $('input[name="end"]').val();
+
+            if (start && end) {
+                var startDate = moment(start, 'MM/DD/YYYY h:mm A');
+                var endDate = moment(end, 'MM/DD/YYYY h:mm A');
+
+                if (startDate.isValid() && endDate.isValid() && endDate > startDate) {
+                    var diffMs = endDate.diff(startDate);
+                    var duration = moment.duration(diffMs);
+
+                    var totalMinutes = duration.asMinutes();
+                    var hours = Math.floor(totalMinutes / 60);
+                    var minutes = Math.floor(totalMinutes % 60);
+
+                    var hoursDisplay = hours < 10 ? '0' + hours : hours;
+                    var minutesDisplay = minutes < 10 ? '0' + minutes : minutes;
+
+                    $('#si_total_hours').text(
+                        hoursDisplay + ':' + minutesDisplay
+                    );
+                } else {
+                    $('#si_total_hours').text('00:00');
+                }
+            }
+        }
+
+        $('input[name="start"], input[name="end"]').on('change', calculateTimeSpent);
+    });
+});
+</script>
+
+
+
+
+
