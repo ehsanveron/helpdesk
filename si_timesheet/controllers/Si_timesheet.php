@@ -297,9 +297,15 @@ class Si_timesheet extends AdminController
             $success = true;
 
             // Save tags (important!)
-			if (isset($data['tags'])) {
-				handle_tags_save($data['tags'], $timesheet_id, 'task_timer');
-			}
+		//	if (isset($data['tags'])) {
+		//		handle_tags_save($data['tags'], $timesheet_id, 'task_timer');
+		//	}
+
+		if (isset($data['tags'])) {
+			$this->db->where('id', $timesheet_id);
+			$this->db->update(db_prefix() . 'taskstimers', ['tags' => $data['tags']]);
+		}
+		
 			
 
             // Prepare message
@@ -323,11 +329,9 @@ public function view_timesheet($id = 1)
 {
 	$data['timesheet'] = $this->si_timesheet_model->get_timesheet($id);
 
-	// ✅ Get tags and pass them to the view
 	$data['tags'] = '';
 	if (!empty($data['timesheet'])) {
-		$tags = get_tags_in($id, 'task_timer');
-		$data['tags'] = implode(',', $tags);
+		$data['tags'] = $data['timesheet']->tags;
 	}
 
 	$data['editable'] = true;
@@ -338,6 +342,9 @@ public function view_timesheet($id = 1)
 
 	$this->load->view('timesheet/timesheet', $data);
 }
+
+
+
 
 
 

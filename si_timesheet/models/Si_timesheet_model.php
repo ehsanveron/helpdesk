@@ -430,7 +430,8 @@ class Si_timesheet_model extends App_Model
 
 		if (is_numeric($id)) {
 
-			$this->db->select(db_prefix() . 'taskstimers.*,name,CONCAT(IFNULL(' . tasks_rel_name_select_query() . ',\'\')," ('._l('task').' : '._l('task_single_start_date').' ",DATE_FORMAT(startdate,"%d-%m-%Y")," - '._l('task_single_due_date').' ",IFNULL(DATE_FORMAT(duedate,"%d-%m-%Y"),\'-\'),")") as subtext,status');
+		//	$this->db->select(db_prefix() . 'taskstimers.*,name,CONCAT(IFNULL(' . tasks_rel_name_select_query() . ',\'\')," ('._l('task').' : '._l('task_single_start_date').' ",DATE_FORMAT(startdate,"%d-%m-%Y")," - '._l('task_single_due_date').' ",IFNULL(DATE_FORMAT(duedate,"%d-%m-%Y"),\'-\'),")") as subtext,status');
+		$this->db->select(db_prefix() . 'taskstimers.*, ' . db_prefix() . 'taskstimers.tags as tags, name, CONCAT(IFNULL(' . tasks_rel_name_select_query() . ',\'\')," ('._l('task').' : '._l('task_single_start_date').' ",DATE_FORMAT(startdate,"%d-%m-%Y")," - '._l('task_single_due_date').' ",IFNULL(DATE_FORMAT(duedate,"%d-%m-%Y"),\'-\'),")") as subtext, status');
 
             $this->db->where(db_prefix() . 'taskstimers.id',$id);
 
@@ -476,8 +477,11 @@ class Si_timesheet_model extends App_Model
     $data['start_time'] = strtotime(to_sql_date($data['start'], true));
 
     // Handle tags separately to prevent DB error
-    $tags = isset($data['tags']) ? $data['tags'] : '';
-    unset($data['tags']); // Remove from $data to avoid SQL issue
+   // $tags = isset($data['tags']) ? $data['tags'] : '';
+  //  unset($data['tags']); // Remove from $data to avoid SQL issue
+
+	$data['tags'] = isset($data['tags']) ? $data['tags'] : '';
+
 
     if ($data['end'] !== '') {
         $data['end_time'] = strtotime(to_sql_date($data['end'], true));
@@ -502,9 +506,9 @@ class Si_timesheet_model extends App_Model
         $this->db->where('id', $id);
         $this->db->update(db_prefix() . 'taskstimers', $data);
 
-        if (!empty($tags)) {
-            handle_tags_save($tags, $id, 'task_timer'); // Save tags properly
-        }
+     //   if (!empty($tags)) {
+     //       handle_tags_save($tags, $id, 'task_timer'); // Save tags properly
+    //    }
 
         return $id;
     }
@@ -513,9 +517,9 @@ class Si_timesheet_model extends App_Model
     $this->db->insert(db_prefix() . 'taskstimers', $data);
     $insert_id = $this->db->insert_id();
 
-    if (!empty($tags)) {
-        handle_tags_save($tags, $insert_id, 'task_timer'); // Save tags properly
-    }
+ //   if (!empty($tags)) {
+   //     handle_tags_save($tags, $insert_id, 'task_timer'); // Save tags properly
+//    }
 
     return $insert_id;
 }
@@ -537,11 +541,11 @@ class Si_timesheet_model extends App_Model
 
 		if ($this->db->affected_rows() > 0) {
 
-			$this->db->where('rel_id', $id);
+		//	$this->db->where('rel_id', $id);
 
-			$this->db->where('rel_type', 'timesheet');
+		//	$this->db->where('rel_type', 'timesheet');
 
-			$this->db->delete(db_prefix() . 'taggables');
+		//	$this->db->delete(db_prefix() . 'taggables');
 
 
 

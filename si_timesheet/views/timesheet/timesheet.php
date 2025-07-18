@@ -68,6 +68,16 @@
 
 							</div>
 
+							<div class="col-md-12 mtop15">
+							<?php /*
+    <div class="form-group">
+        <label for="tags" class="control-label"><?php echo _l('tags'); ?></label>
+		<input type="text" class="tagsinput" id="tags" name="tags" value="<?php echo htmlspecialchars($tags); ?>" data-role="tagsinput">
+		</div>
+</div>
+*/ ?>
+
+
 						</div>
 
 						<?php } else { ?>
